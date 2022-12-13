@@ -99,8 +99,22 @@ typedef struct WindowComponents {
 			std::cout << s << std::endl;
 		//std::cout << json << std::endl;
 		std::cout << json["event"]["type"] << std::endl;
-		for (auto s : json["event"])
-			std::cout << s << std::endl;
+		if (json["event"]["type"] == "AddSubscriber")
+		return;
+		Json::Value tmp = json["event"];
+		std::cout << "size of HWND" << sizeof(HWND) << std::endl;
+		HWND tmp2 = (HWND)(tmp["content"][1]["hwnd"].asUInt());
+		std::cout << sizeof(double) << std::endl;
+		std::cout << "hwnd" << tmp2 << std::endl;
+		tmp2 = reinterpret_cast<HWND>(tmp["content"][1]["hwnd"].asUInt64());
+		std::cout << "hwnd" << (int)tmp2 << std::endl;
+		
+		Json::Value rect = tmp["content"][1]["rect"];
+
+		std::cout << tmp << std::endl;
+		std::cout << rect << std::endl;
+
+
 	}
 
 	// hwnd : stacked all windows hwnd that is visible.
