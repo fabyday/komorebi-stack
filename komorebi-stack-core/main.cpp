@@ -90,7 +90,7 @@ typedef struct WindowComponents {
 	}
 
 	void draw_stacked_window_gizmo() {
-		int t;
+		int t=10;
 	}
 
 	// hwnd : focused window hwnd that stacked.
