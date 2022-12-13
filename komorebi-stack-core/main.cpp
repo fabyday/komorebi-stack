@@ -1,7 +1,8 @@
 
 #include "stb_helper_function.h" // helper function
 #include <map>
-
+#define __ADD_KOMOREBI_HEADER_IMPL__
+#include "komorebi_predefined.h"
 #pragma comment(lib, "Dwmapi.lib")
 
 
@@ -93,8 +94,13 @@ typedef struct WindowComponents {
 	}
 
 	// hwnd : focused window hwnd that stacked.
-	void update(HWND hwnd) { // when WIN_PAINT or get Signal(immediately)
-		
+	void update(Json::Value& json) { // when WIN_PAINT or get Signal(immediately)
+		for (auto s : json.getMemberNames())
+			std::cout << s << std::endl;
+		//std::cout << json << std::endl;
+		std::cout << json["event"]["type"] << std::endl;
+		for (auto s : json["event"])
+			std::cout << s << std::endl;
 	}
 
 	// hwnd : stacked all windows hwnd that is visible.
@@ -176,6 +182,8 @@ struct GlobalContext {
 
 	}
 
+	HWND get_handle() { return m_hwnd; }
+
 
 } g_context;
 
@@ -226,7 +234,7 @@ bool init() {
 
 	connect_console();
 	g_context.init();
-	g_context.m_named_pipe = std::move(kenobi::NamedPipe().init(L"kenobipipe"));
+	g_context.m_named_pipe = std::move(kenobi::NamedPipe().init(L"kenobipipe").set_subscribed_window(g_context.get_handle()).run());
 	std::wstring command = commands["register"] + g_context.m_named_pipe.get_name();
 	const std::string tmp_command(command.begin(), command.end());
 	std::cout << tmp_command << std::endl;
@@ -266,8 +274,16 @@ bool init() {
 LRESULT _loop_function(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 	switch (msg)
 	{
+	case WM_KOMOREBI_EVENT: {
+
+		Json::Value* j = reinterpret_cast<Json::Value*>(wp);
+		g_context.m_win.update(*j);
+		if (j != nullptr)
+			delete j;
+		break;
+	}	
 	case WM_PAINT:
-		g_context.m_win.update(hwnd);
+		//g_context.m_win.repaint();
 		break;
 	case WM_TIMER:
 	{
