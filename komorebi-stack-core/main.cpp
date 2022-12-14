@@ -56,7 +56,7 @@ typedef struct WindowComponents {
 		WNDCLASSEX wc = {};
 		wc.cbSize = sizeof(WNDCLASSEX);
 		wc.style = CS_HREDRAW | CS_VREDRAW;
-		wc.lpszClassName = L"Kenobi";
+		wc.lpszClassName = L"kenobi_gizmo";
 		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
 		wc.hbrBackground = NULL;
 
@@ -135,16 +135,17 @@ typedef struct WindowComponents {
 		return;
 		Json::Value tmp = json["event"];
 		std::cout << "size of HWND" << sizeof(HWND) << std::endl;
-		HWND tmp2 = (HWND)(tmp["content"][1]["hwnd"].asUInt());
+		std::cout << json["event"] << std::endl;
+		/*HWND tmp2 = (HWND)(tmp["content"][1]["hwnd"].asUInt());
 		std::cout << sizeof(double) << std::endl;
 		std::cout << "hwnd" << tmp2 << std::endl;
 		tmp2 = reinterpret_cast<HWND>(tmp["content"][1]["hwnd"].asUInt64());
 		std::cout << "hwnd" << (int)tmp2 << std::endl;
-		
-		Json::Value rect = tmp["content"][1]["rect"];
+		*/
+		//Json::Value rect = tmp["content"][1]["rect"];
 
-		std::cout << tmp << std::endl;
-		std::cout << rect << std::endl;
+		//std::cout << tmp << std::endl;
+		//std::cout << rect << std::endl;
 
 
 	}
