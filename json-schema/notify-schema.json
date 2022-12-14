@@ -1,0 +1,2839 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Notification",
+  "type": "object",
+  "required": [
+    "event",
+    "state"
+  ],
+  "properties": {
+    "event": {
+      "$ref": "#/definitions/NotificationEvent"
+    },
+    "state": {
+      "$ref": "#/definitions/State"
+    }
+  },
+  "definitions": {
+    "ApplicationIdentifier": {
+      "type": "string",
+      "enum": [
+        "exe",
+        "class",
+        "title"
+      ]
+    },
+    "Axis": {
+      "type": "string",
+      "enum": [
+        "Horizontal",
+        "Vertical",
+        "HorizontalAndVertical"
+      ]
+    },
+    "Column": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "column",
+            "configuration"
+          ],
+          "properties": {
+            "column": {
+              "type": "string",
+              "enum": [
+                "Primary"
+              ]
+            },
+            "configuration": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ColumnWidth"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "column",
+            "configuration"
+          ],
+          "properties": {
+            "column": {
+              "type": "string",
+              "enum": [
+                "Secondary"
+              ]
+            },
+            "configuration": {
+              "anyOf": [
+                {
+                  "$ref": "#/definitions/ColumnSplitWithCapacity"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "column",
+            "configuration"
+          ],
+          "properties": {
+            "column": {
+              "type": "string",
+              "enum": [
+                "Tertiary"
+              ]
+            },
+            "configuration": {
+              "$ref": "#/definitions/ColumnSplit"
+            }
+          }
+        }
+      ]
+    },
+    "ColumnSplit": {
+      "type": "string",
+      "enum": [
+        "Horizontal",
+        "Vertical"
+      ]
+    },
+    "ColumnSplitWithCapacity": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "Horizontal"
+          ],
+          "properties": {
+            "Horizontal": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "Vertical"
+          ],
+          "properties": {
+            "Vertical": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "ColumnWidth": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "WidthPercentage"
+          ],
+          "properties": {
+            "WidthPercentage": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Container": {
+      "type": "object",
+      "required": [
+        "id",
+        "windows"
+      ],
+      "properties": {
+        "id": {
+          "writeOnly": true,
+          "type": "string"
+        },
+        "windows": {
+          "$ref": "#/definitions/Ring_for_Window"
+        }
+      }
+    },
+    "CustomLayout": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/Column"
+      }
+    },
+    "CycleDirection": {
+      "type": "string",
+      "enum": [
+        "Previous",
+        "Next"
+      ]
+    },
+    "DefaultLayout": {
+      "type": "string",
+      "enum": [
+        "BSP",
+        "Columns",
+        "Rows",
+        "VerticalStack",
+        "HorizontalStack",
+        "UltrawideVerticalStack"
+      ]
+    },
+    "FocusFollowsMouseImplementation": {
+      "type": "string",
+      "enum": [
+        "Komorebi",
+        "Windows"
+      ]
+    },
+    "HidingBehaviour": {
+      "type": "string",
+      "enum": [
+        "Hide",
+        "Minimize"
+      ]
+    },
+    "Layout": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "Default"
+          ],
+          "properties": {
+            "Default": {
+              "$ref": "#/definitions/DefaultLayout"
+            }
+          },
+          "additionalProperties": false
+        },
+        {
+          "type": "object",
+          "required": [
+            "Custom"
+          ],
+          "properties": {
+            "Custom": {
+              "$ref": "#/definitions/CustomLayout"
+            }
+          },
+          "additionalProperties": false
+        }
+      ]
+    },
+    "Monitor": {
+      "type": "object",
+      "required": [
+        "id",
+        "size",
+        "work_area_size",
+        "workspace_names",
+        "workspaces"
+      ],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "format": "int"
+        },
+        "size": {
+          "$ref": "#/definitions/Rect"
+        },
+        "work_area_size": {
+          "$ref": "#/definitions/Rect"
+        },
+        "workspace_names": {
+          "writeOnly": true,
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "workspaces": {
+          "$ref": "#/definitions/Ring_for_Workspace"
+        }
+      }
+    },
+    "MoveBehaviour": {
+      "type": "string",
+      "enum": [
+        "Swap",
+        "Insert"
+      ]
+    },
+    "NotificationEvent": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/WindowManagerEvent"
+        },
+        {
+          "$ref": "#/definitions/SocketMessage"
+        }
+      ]
+    },
+    "OperationBehaviour": {
+      "type": "string",
+      "enum": [
+        "Op",
+        "NoOp"
+      ]
+    },
+    "OperationDirection": {
+      "type": "string",
+      "enum": [
+        "Left",
+        "Right",
+        "Up",
+        "Down"
+      ]
+    },
+    "Rect": {
+      "type": "object",
+      "required": [
+        "bottom",
+        "left",
+        "right",
+        "top"
+      ],
+      "properties": {
+        "bottom": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "left": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "right": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "top": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Ring_for_Container": {
+      "type": "object",
+      "required": [
+        "elements",
+        "focused"
+      ],
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Container"
+          }
+        },
+        "focused": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Ring_for_Monitor": {
+      "type": "object",
+      "required": [
+        "elements",
+        "focused"
+      ],
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Monitor"
+          }
+        },
+        "focused": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Ring_for_Window": {
+      "type": "object",
+      "required": [
+        "elements",
+        "focused"
+      ],
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Window"
+          }
+        },
+        "focused": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Ring_for_Workspace": {
+      "type": "object",
+      "required": [
+        "elements",
+        "focused"
+      ],
+      "properties": {
+        "elements": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Workspace"
+          }
+        },
+        "focused": {
+          "type": "integer",
+          "format": "uint",
+          "minimum": 0.0
+        }
+      }
+    },
+    "Sizing": {
+      "type": "string",
+      "enum": [
+        "Increase",
+        "Decrease"
+      ]
+    },
+    "SocketMessage": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/OperationDirection"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FocusWindow"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/OperationDirection"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MoveWindow"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/CycleDirection"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "CycleFocusWindow"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/CycleDirection"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "CycleMoveWindow"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/OperationDirection"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "StackWindow"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/OperationDirection"
+                },
+                {
+                  "$ref": "#/definitions/Sizing"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ResizeWindowEdge"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/Axis"
+                },
+                {
+                  "$ref": "#/definitions/Sizing"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ResizeWindowAxis"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "UnstackWindow"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/CycleDirection"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "CycleStack"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MoveContainerToMonitorNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MoveContainerToWorkspaceNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "SendContainerToMonitorNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "SendContainerToWorkspaceNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "SendContainerToMonitorWorkspaceNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MoveWorkspaceToMonitorNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Promote"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "PromoteFocus"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ToggleFloat"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ToggleMonocle"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ToggleMaximize"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ToggleWindowContainerBehaviour"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/HidingBehaviour"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WindowHidingBehaviour"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ToggleCrossMonitorMoveBehaviour"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/MoveBehaviour"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "CrossMonitorMoveBehaviour"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/OperationBehaviour"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "UnmanagedWindowOperationBehaviour"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ManageFocusedWindow"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "UnmanageFocusedWindow"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/Sizing"
+                },
+                {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "AdjustContainerPadding"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/Sizing"
+                },
+                {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "AdjustWorkspacePadding"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/DefaultLayout"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ChangeLayout"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ChangeLayoutCustom"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/Axis"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FlipLayout"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "EnsureWorkspaces"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "NewWorkspace"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ToggleTiling"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Stop"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "TogglePause"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "Retile"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "QuickSave"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "QuickLoad"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Save"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Load"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/CycleDirection"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "CycleFocusMonitor"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/CycleDirection"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "CycleFocusWorkspace"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FocusMonitorNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "integer",
+              "format": "uint",
+              "minimum": 0.0
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FocusWorkspaceNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FocusMonitorWorkspaceNumber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              ],
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ContainerPadding"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              ],
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkspacePadding"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkspaceTiling"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkspaceName"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "$ref": "#/definitions/DefaultLayout"
+                }
+              ],
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkspaceLayout"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 3,
+              "minItems": 3
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkspaceLayoutCustom"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "$ref": "#/definitions/DefaultLayout"
+                }
+              ],
+              "maxItems": 4,
+              "minItems": 4
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkspaceLayoutRule"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 4,
+              "minItems": 4
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkspaceLayoutCustomRule"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ClearWorkspaceLayoutRules"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ReloadConfiguration"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WatchConfiguration"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "CompleteConfiguration"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ActiveWindowBorder"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WindowKind"
+                },
+                {
+                  "type": "integer",
+                  "format": "uint32",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint32",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint32",
+                  "minimum": 0.0
+                }
+              ],
+              "maxItems": 4,
+              "minItems": 4
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ActiveWindowBorderColour"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/Rect"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "InvisibleBorders"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/Rect"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkAreaOffset"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ResizeDelta"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/ApplicationIdentifier"
+                },
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                },
+                {
+                  "type": "integer",
+                  "format": "uint",
+                  "minimum": 0.0
+                }
+              ],
+              "maxItems": 4,
+              "minItems": 4
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "WorkspaceRule"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/ApplicationIdentifier"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FloatRule"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/ApplicationIdentifier"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ManageRule"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/ApplicationIdentifier"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "IdentifyObjectNameChangeApplication"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/ApplicationIdentifier"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "IdentifyTrayApplication"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/ApplicationIdentifier"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "IdentifyLayeredApplication"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/ApplicationIdentifier"
+                },
+                {
+                  "type": "string"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "IdentifyBorderOverflowApplication"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "State"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/StateQuery"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Query"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/FocusFollowsMouseImplementation"
+                },
+                {
+                  "type": "boolean"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FocusFollowsMouse"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/FocusFollowsMouseImplementation"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "ToggleFocusFollowsMouse"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "boolean"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MouseFollowsFocus"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "ToggleMouseFollowsFocus"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "AddSubscriber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "RemoveSubscriber"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "NotificationSchema"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "type": "string",
+              "enum": [
+                "SocketSchema"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "State": {
+      "type": "object",
+      "required": [
+        "border_overflow_identifiers",
+        "cross_monitor_move_behaviour",
+        "float_identifiers",
+        "has_pending_raise_op",
+        "invisible_borders",
+        "is_paused",
+        "layered_whitelist",
+        "manage_identifiers",
+        "monitors",
+        "mouse_follows_focus",
+        "name_change_on_launch_identifiers",
+        "new_window_behaviour",
+        "resize_delta",
+        "tray_and_multi_window_identifiers"
+      ],
+      "properties": {
+        "border_overflow_identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "cross_monitor_move_behaviour": {
+          "$ref": "#/definitions/MoveBehaviour"
+        },
+        "float_identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "focus_follows_mouse": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/FocusFollowsMouseImplementation"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "has_pending_raise_op": {
+          "type": "boolean"
+        },
+        "invisible_borders": {
+          "$ref": "#/definitions/Rect"
+        },
+        "is_paused": {
+          "type": "boolean"
+        },
+        "layered_whitelist": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "manage_identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "monitors": {
+          "$ref": "#/definitions/Ring_for_Monitor"
+        },
+        "mouse_follows_focus": {
+          "type": "boolean"
+        },
+        "name_change_on_launch_identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "new_window_behaviour": {
+          "$ref": "#/definitions/WindowContainerBehaviour"
+        },
+        "resize_delta": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "tray_and_multi_window_identifiers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "work_area_offset": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Rect"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      }
+    },
+    "StateQuery": {
+      "type": "string",
+      "enum": [
+        "FocusedMonitorIndex",
+        "FocusedWorkspaceIndex",
+        "FocusedContainerIndex",
+        "FocusedWindowIndex"
+      ]
+    },
+    "WinEvent": {
+      "type": "string",
+      "enum": [
+        "AiaEnd",
+        "AiaStart",
+        "ConsoleCaret",
+        "ConsoleEnd",
+        "ConsoleEndApplication",
+        "ConsoleLayout",
+        "ConsoleStartApplication",
+        "ConsoleUpdateRegion",
+        "ConsoleUpdateScroll",
+        "ConsoleUpdateSimple",
+        "ObjectAcceleratorChange",
+        "ObjectCloaked",
+        "ObjectContentScrolled",
+        "ObjectCreate",
+        "ObjectDefActionChange",
+        "ObjectDescriptionChange",
+        "ObjectDestroy",
+        "ObjectDragCancel",
+        "ObjectDragComplete",
+        "ObjectDragDropped",
+        "ObjectDragEnter",
+        "ObjectDragLeave",
+        "ObjectDragStart",
+        "ObjectEnd",
+        "ObjectFocus",
+        "ObjectHelpChange",
+        "ObjectHide",
+        "ObjectHostedObjectsInvalidated",
+        "ObjectImeChange",
+        "ObjectImeHide",
+        "ObjectImeShow",
+        "ObjectInvoked",
+        "ObjectLiveRegionChanged",
+        "ObjectLocationChange",
+        "ObjectNameChange",
+        "ObjectParentChange",
+        "ObjectReorder",
+        "ObjectSelection",
+        "ObjectSelectionAdd",
+        "ObjectSelectionRemove",
+        "ObjectSelectionWithin",
+        "ObjectShow",
+        "ObjectStateChange",
+        "ObjectTextEditConversionTargetChanged",
+        "ObjectTextSelectionChanged",
+        "ObjectUncloaked",
+        "ObjectValueChange",
+        "OemDefinedEnd",
+        "OemDefinedStart",
+        "SystemAlert",
+        "SystemArrangementPreview",
+        "SystemCaptureEnd",
+        "SystemCaptureStart",
+        "SystemContextHelpEnd",
+        "SystemContextHelpStart",
+        "SystemDesktopSwitch",
+        "SystemDialogEnd",
+        "SystemDialogStart",
+        "SystemDragDropEnd",
+        "SystemDragDropStart",
+        "SystemEnd",
+        "SystemForeground",
+        "SystemImeKeyNotification",
+        "SystemMenuEnd",
+        "SystemMenuPopupEnd",
+        "SystemMenuPopupStart",
+        "SystemMenuStart",
+        "SystemMinimizeEnd",
+        "SystemMinimizeStart",
+        "SystemMoveSizeEnd",
+        "SystemMoveSizeStart",
+        "SystemScrollingEnd",
+        "SystemScrollingStart",
+        "SystemSound",
+        "SystemSwitchEnd",
+        "SystemSwitchStart",
+        "SystemSwitcherAppDropped",
+        "SystemSwitcherAppGrabbed",
+        "SystemSwitcherAppOverTarget",
+        "SystemSwitcherCancelled",
+        "UiaEventIdSEnd",
+        "UiaEventIdStart",
+        "UiaPropIdSEnd",
+        "UiaPropIdStart"
+      ]
+    },
+    "Window": {
+      "type": "object",
+      "required": [
+        "hwnd"
+      ],
+      "properties": {
+        "hwnd": {
+          "type": "integer",
+          "format": "int"
+        }
+      }
+    },
+    "WindowContainerBehaviour": {
+      "type": "string",
+      "enum": [
+        "Create",
+        "Append"
+      ]
+    },
+    "WindowKind": {
+      "type": "string",
+      "enum": [
+        "Single",
+        "Stack"
+      ]
+    },
+    "WindowManagerEvent": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Destroy"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "FocusChange"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Hide"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Minimize"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Show"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MoveResizeStart"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MoveResizeEnd"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MouseCapture"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/Window"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Manage"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/Window"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Unmanage"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "$ref": "#/definitions/Window"
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "Raise"
+              ]
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "content",
+            "type"
+          ],
+          "properties": {
+            "content": {
+              "type": "array",
+              "items": [
+                {
+                  "$ref": "#/definitions/WinEvent"
+                },
+                {
+                  "$ref": "#/definitions/Window"
+                }
+              ],
+              "maxItems": 2,
+              "minItems": 2
+            },
+            "type": {
+              "type": "string",
+              "enum": [
+                "MonitorPoll"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "Workspace": {
+      "type": "object",
+      "required": [
+        "containers",
+        "floating_windows",
+        "latest_layout",
+        "layout",
+        "layout_rules",
+        "resize_dimensions",
+        "tile"
+      ],
+      "properties": {
+        "container_padding": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int32"
+        },
+        "containers": {
+          "$ref": "#/definitions/Ring_for_Container"
+        },
+        "floating_windows": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Window"
+          }
+        },
+        "latest_layout": {
+          "writeOnly": true,
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Rect"
+          }
+        },
+        "layout": {
+          "$ref": "#/definitions/Layout"
+        },
+        "layout_flip": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Axis"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "layout_rules": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "items": [
+              {
+                "type": "integer",
+                "format": "uint",
+                "minimum": 0.0
+              },
+              {
+                "$ref": "#/definitions/Layout"
+              }
+            ],
+            "maxItems": 2,
+            "minItems": 2
+          }
+        },
+        "maximized_window": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Window"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "maximized_window_restore_idx": {
+          "writeOnly": true,
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "monocle_container": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/Container"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "monocle_container_restore_idx": {
+          "writeOnly": true,
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "uint",
+          "minimum": 0.0
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "resize_dimensions": {
+          "type": "array",
+          "items": {
+            "anyOf": [
+              {
+                "$ref": "#/definitions/Rect"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "tile": {
+          "type": "boolean"
+        },
+        "workspace_padding": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int32"
+        }
+      }
+    }
+  }
+}

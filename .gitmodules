@@ -1,3 +1,9 @@
 [submodule "3rd_party/jsoncpp"]
 	path = 3rd_party/jsoncpp
 	url = git@github.com:open-source-parsers/jsoncpp.git
+[submodule "3rd_party/spdlog"]
+	path = 3rd_party/spdlog
+	url = git@github.com:gabime/spdlog.git
+[submodule "3rd_party/argparse"]
+	path = 3rd_party/argparse
+	url = git@github.com:p-ranav/argparse.git

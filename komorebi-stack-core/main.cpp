@@ -13,8 +13,6 @@ std::map<std::string, std::wstring> commands = {
 };
 
 
-
-
 const COLORREF MY_COLOR_KEY = RGB(255, 128, 0);
 HWND cmdHanlde = NULL;
 constexpr unsigned int timerIdWindowUpdate = 1;
@@ -35,14 +33,18 @@ LRESULT _loop_function(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
 typedef struct WindowComponents {
 	std::vector<HWND> m_windows;
-	std::map<HWND, int> m_handle_index_map;
+	std::vector<HWND> m_gizmo_handle;
+	std::map<HWND, int> gizmo_window_handle;
 
 	enum gizmo_type {SIMPLE, ICON};
-	enum gizmo_type gizmo = ICON;
+	enum gizmo_align_type {LEFT, RIGHT, TOP, BOTTOM};
+	
+	enum gizmo_type m_gizmo_type = ICON;
+	enum gizmo_align_type m_gizmo_align_type = LEFT;
+	
 
 	void regist_window(HWND win_hwnd) {
 		m_windows.push_back(win_hwnd);
-		m_handle_index_map[win_hwnd] = m_windows.size() - 1;
 
 	}
 	void unregist_window(HWND hwnd) {
@@ -50,21 +52,51 @@ typedef struct WindowComponents {
 	}
 
 
-	void _create_item_view() {
+	void _create_gizmo_view(HWND target) {
+		WNDCLASSEX wc = {};
+		wc.cbSize = sizeof(WNDCLASSEX);
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.lpszClassName = L"Kenobi";
+		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = NULL;
+
+		wc.lpfnWndProc = _loop_function;
+
+		RegisterClassEx(&wc);
+
+		//HWND hand = CreateWindowEx(
+		//    0,                              // Optional window styles.
+		//    CLASS_NAME,                     // Window class
+		//    L"Learn to Program Windows",    // Window text
+		//    WS_OVERLAPPEDWINDOW,            // Window style
+
+		//    // Size and position
+		//    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+
+		//    NULL,       // Parent window    
+		//    NULL,       // Menu
+		//    hInstance,  // Instance handle
+		//    NULL        // Additional application data
+		//);
+
+
+		//ShowWindow(hand, SW_SHOW);
+
+
 
 	}
 
-	void _remove_item_view() {
+	void _remove_item_view(HWND target) {
 
 	}
 
 	void set_gizmo_type(enum gizmo_type t) {
-		gizmo = t;
+		m_gizmo_type = t;
 	}
 
-	void draw_frame() {
+	void _draw_frame(HWND target) {
 		{
-			HWND hwnd = m_windows[0];
+			HWND hwnd = target;
 			PAINTSTRUCT ps{};
 			HDC hdc = BeginPaint(hwnd, &ps);
 
