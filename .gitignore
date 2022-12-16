@@ -1,5 +1,5 @@
 lib
 komorebi-stack-core/x64
 komorebi-stack-core/x86
-/x64
-.vs
+x64
+.vs/

@@ -7,6 +7,7 @@
 #include <thread>
 #include <utility>
 #include <iostream>
+#include "komorebi_predefined.h"
 namespace fs = std::filesystem;
 #define MAX_BUFFER 2048
 
@@ -20,15 +21,17 @@ namespace kenobi {
 		std::wstring m_name;
 		bool m_is_valid;
 		const static std::wstring m_prefix;
+		HWND m_subscribed_window;
 
 		std::thread m_thread;
-		NamedPipe() : m_hpipe(NULL), m_is_valid(false), m_thread() {};
+		NamedPipe() : m_subscribed_window(NULL), m_hpipe(NULL), m_is_valid(false), m_thread() {};
 		
 		void operator=(NamedPipe&& other) noexcept {
 			m_hpipe = other.m_hpipe;
 			m_is_valid = other.m_is_valid;
 			m_name = std::move(other.m_name);
 			m_thread = std::move(other.m_thread);
+			m_subscribed_window = other.m_subscribed_window;
 		}
 		//std::vector<std::function<std::string>> m_callback;
 		std::wstring get_name() {
@@ -45,11 +48,16 @@ namespace kenobi {
 				NMPWAIT_USE_DEFAULT_WAIT,
 				NULL);
 
-
-			m_thread = std::move(std::thread(listen_thread, m_hpipe));
 			return *this;
 		}
 
+		NamedPipe& set_subscribed_window(HWND w) {
+			m_subscribed_window = w; 
+		return *this; }
+		NamedPipe& run() {
+			m_thread = std::move(std::thread(listen_thread, m_hpipe, m_subscribed_window));
+			return *this;
+		};
 		~NamedPipe() {
 			DisconnectNamedPipe(m_hpipe);
 		}
@@ -58,9 +66,10 @@ namespace kenobi {
 
 		}
 
-		static void listen_thread(HANDLE hPipe) {
+		static void listen_thread(HANDLE hPipe, HWND subscribed_win) {
 			char buffer[MAX_BUFFER];
 			DWORD dwRead;
+			static int ss= 0;
 			while (hPipe != INVALID_HANDLE_VALUE)
 			{
 
@@ -69,41 +78,46 @@ namespace kenobi {
 				if (ConnectNamedPipe(hPipe, NULL) != FALSE)   // wait for someone to connect to the pipe
 				{
 					std::string json_str;
-					//while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
-					while (true)
+					int parentless = 0;
+					while (ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL) != FALSE)
 					{
 
-						int res = ReadFile(hPipe, buffer, sizeof(buffer) - 1, &dwRead, NULL);
-						std::cout << "res : " << res << std::endl;
 						buffer[dwRead] = '\0';
-						std::cout << buffer << std::endl;
-						if (res == 0){
-							std::cout << "=========" << std::endl;
-							std::cout << " breaked" << std::endl;
-							break;
-						}
-						/*if (res == 0) {
-							if (dwRead < MAX_BUFFER) {
-								buffer[dwRead] = '\0';
-								json_str += buffer;
-
+						for (int i = 0; i < dwRead; i++) {
+							switch (buffer[i]) {
+							case '{':
+								parentless++;
+								break;
+							case '}':
+								parentless--;
+								break;
 							}
-							else {
-								json_str += buffer;
-								json_str += '\0';
-							}
-							break;
 						}
-						json_str += buffer;*/
+						json_str += buffer;
 
-						std::cout << json_str << std::endl;
-					/* add terminating zero */
-					}
-					json_str += '\0';
-
+						if (parentless == 0) {
+							std::cout << "=====================" << std::endl;
+							//std::cout << std::endl << std::endl<< ss << std::endl;
+							Json::Value* t = new Json::Value(read_json(json_str));
+							//std::cout << read_json(json_str) << std::endl;
+							
+							json_str.clear();
+							ss++;
+							std::cout << subscribed_win << std::endl;
+							PostMessageA(subscribed_win, WM_KOMOREBI_EVENT, reinterpret_cast<WPARAM>(t), reinterpret_cast<LPARAM>(nullptr));
+							//break;
+						}
+						}
+					ss++;
+					//std::cout << ss << std::endl;
+					//std::cout <<json_str << std::endl;
 					/* do something with data in buffer */
-					//std::cout << buffer << std::endl;
-					std::cout << read_json(buffer) << std::endl;
+					std::cout << buffer << std::endl;
+					Json::Value root = read_json(json_str);
+					root["encoding"] = "utf-8";
+					root["indent"]["length"] = 4;
+					root["indent"]["use_space"] = true;
+					std::cout << root << std::endl;
 				}
 			}
 		}
@@ -117,11 +131,9 @@ namespace kenobi {
 
 
 	Json::Value read_json(const std::string& str) {
-		std::cout << str << "\ntested" << std::endl;
 		Json::Value root;
-		std::cin >> root;
-		std::cout << root << std::endl;
-		std::cout << "test end " << std::endl;
+		Json::Reader s;
+		s.parse(str, root);
 		return root;
 	}
 

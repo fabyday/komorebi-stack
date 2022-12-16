@@ -1,7 +1,8 @@
 
 #include "stb_helper_function.h" // helper function
 #include <map>
-
+#define __ADD_KOMOREBI_HEADER_IMPL__
+#include "komorebi_predefined.h"
 #pragma comment(lib, "Dwmapi.lib")
 
 
@@ -10,8 +11,6 @@
 std::map<std::string, std::wstring> commands = {
 	{"register", L"komorebic subscribe "},
 };
-
-
 
 
 const COLORREF MY_COLOR_KEY = RGB(255, 128, 0);
@@ -34,14 +33,18 @@ LRESULT _loop_function(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
 typedef struct WindowComponents {
 	std::vector<HWND> m_windows;
-	std::map<HWND, int> m_handle_index_map;
+	std::vector<HWND> m_gizmo_handle;
+	std::map<HWND, int> gizmo_window_handle;
 
 	enum gizmo_type {SIMPLE, ICON};
-	enum gizmo_type gizmo = ICON;
+	enum gizmo_align_type {LEFT, RIGHT, TOP, BOTTOM};
+	
+	enum gizmo_type m_gizmo_type = ICON;
+	enum gizmo_align_type m_gizmo_align_type = LEFT;
+	
 
 	void regist_window(HWND win_hwnd) {
 		m_windows.push_back(win_hwnd);
-		m_handle_index_map[win_hwnd] = m_windows.size() - 1;
 
 	}
 	void unregist_window(HWND hwnd) {
@@ -49,21 +52,51 @@ typedef struct WindowComponents {
 	}
 
 
-	void _create_item_view() {
+	void _create_gizmo_view(HWND target) {
+		WNDCLASSEX wc = {};
+		wc.cbSize = sizeof(WNDCLASSEX);
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.lpszClassName = L"kenobi_gizmo";
+		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = NULL;
+
+		wc.lpfnWndProc = _loop_function;
+
+		RegisterClassEx(&wc);
+
+		//HWND hand = CreateWindowEx(
+		//    0,                              // Optional window styles.
+		//    CLASS_NAME,                     // Window class
+		//    L"Learn to Program Windows",    // Window text
+		//    WS_OVERLAPPEDWINDOW,            // Window style
+
+		//    // Size and position
+		//    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+
+		//    NULL,       // Parent window    
+		//    NULL,       // Menu
+		//    hInstance,  // Instance handle
+		//    NULL        // Additional application data
+		//);
+
+
+		//ShowWindow(hand, SW_SHOW);
+
+
 
 	}
 
-	void _remove_item_view() {
+	void _remove_item_view(HWND target) {
 
 	}
 
 	void set_gizmo_type(enum gizmo_type t) {
-		gizmo = t;
+		m_gizmo_type = t;
 	}
 
-	void draw_frame() {
+	void _draw_frame(HWND target) {
 		{
-			HWND hwnd = m_windows[0];
+			HWND hwnd = target;
 			PAINTSTRUCT ps{};
 			HDC hdc = BeginPaint(hwnd, &ps);
 
@@ -89,12 +122,32 @@ typedef struct WindowComponents {
 	}
 
 	void draw_stacked_window_gizmo() {
-
+		int t=10;
 	}
 
 	// hwnd : focused window hwnd that stacked.
-	void update(HWND hwnd) { // when WIN_PAINT or get Signal(immediately)
-		
+	void update(Json::Value& json) { // when WIN_PAINT or get Signal(immediately)
+		for (auto s : json.getMemberNames())
+			std::cout << s << std::endl;
+		//std::cout << json << std::endl;
+		std::cout << json["event"]["type"] << std::endl;
+		if (json["event"]["type"] == "AddSubscriber")
+		return;
+		Json::Value tmp = json["event"];
+		std::cout << "size of HWND" << sizeof(HWND) << std::endl;
+		std::cout << json["event"] << std::endl;
+		/*HWND tmp2 = (HWND)(tmp["content"][1]["hwnd"].asUInt());
+		std::cout << sizeof(double) << std::endl;
+		std::cout << "hwnd" << tmp2 << std::endl;
+		tmp2 = reinterpret_cast<HWND>(tmp["content"][1]["hwnd"].asUInt64());
+		std::cout << "hwnd" << (int)tmp2 << std::endl;
+		*/
+		//Json::Value rect = tmp["content"][1]["rect"];
+
+		//std::cout << tmp << std::endl;
+		//std::cout << rect << std::endl;
+
+
 	}
 
 	// hwnd : stacked all windows hwnd that is visible.
@@ -176,6 +229,8 @@ struct GlobalContext {
 
 	}
 
+	HWND get_handle() { return m_hwnd; }
+
 
 } g_context;
 
@@ -226,7 +281,7 @@ bool init() {
 
 	connect_console();
 	g_context.init();
-	g_context.m_named_pipe = std::move(kenobi::NamedPipe().init(L"kenobipipe"));
+	g_context.m_named_pipe = std::move(kenobi::NamedPipe().init(L"kenobipipe").set_subscribed_window(g_context.get_handle()).run());
 	std::wstring command = commands["register"] + g_context.m_named_pipe.get_name();
 	const std::string tmp_command(command.begin(), command.end());
 	std::cout << tmp_command << std::endl;
@@ -266,8 +321,16 @@ bool init() {
 LRESULT _loop_function(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp) {
 	switch (msg)
 	{
+	case WM_KOMOREBI_EVENT: {
+
+		Json::Value* j = reinterpret_cast<Json::Value*>(wp);
+		g_context.m_win.update(*j);
+		if (j != nullptr)
+			delete j;
+		break;
+	}	
 	case WM_PAINT:
-		g_context.m_win.update(hwnd);
+		//g_context.m_win.repaint();
 		break;
 	case WM_TIMER:
 	{
