@@ -1,8 +1,9 @@
+#define __ADD_KOMOREBI_HEADER_IMPL__
+#include "komorebi_predefined.h"
 
 #include "stb_helper_function.h" // helper function
 #include <map>
-#define __ADD_KOMOREBI_HEADER_IMPL__
-#include "komorebi_predefined.h"
+
 #pragma comment(lib, "Dwmapi.lib")
 
 
@@ -131,11 +132,13 @@ typedef struct WindowComponents {
 			std::cout << s << std::endl;
 		//std::cout << json << std::endl;
 		std::cout << json["event"]["type"] << std::endl;
-		if (json["event"]["type"] == "AddSubscriber")
+		if (json[JsonKeyword::Event]["type"] == KomorebiEvent::StackWindow) {
+			std::cout << json[JsonKeyword::Event] << std::endl;
+		}
 		return;
 		Json::Value tmp = json["event"];
 		std::cout << "size of HWND" << sizeof(HWND) << std::endl;
-		std::cout << json["event"] << std::endl;
+		//std::cout << json["event"] << std::endl;
 		/*HWND tmp2 = (HWND)(tmp["content"][1]["hwnd"].asUInt());
 		std::cout << sizeof(double) << std::endl;
 		std::cout << "hwnd" << tmp2 << std::endl;
@@ -147,7 +150,7 @@ typedef struct WindowComponents {
 		//std::cout << tmp << std::endl;
 		//std::cout << rect << std::endl;
 
-
+		std::cout << "====update end=====" << std::endl;
 	}
 
 	// hwnd : stacked all windows hwnd that is visible.

@@ -7,7 +7,12 @@
 #include <thread>
 #include <utility>
 #include <iostream>
-#include "komorebi_predefined.h"
+//#include "komorebi_predefined.h"
+
+#define WM_KOMOREBI_EVENT (WM_USER+1)
+
+
+
 namespace fs = std::filesystem;
 #define MAX_BUFFER 2048
 
@@ -96,14 +101,11 @@ namespace kenobi {
 						json_str += buffer;
 
 						if (parentless == 0) {
-							std::cout << "=====================" << std::endl;
 							//std::cout << std::endl << std::endl<< ss << std::endl;
 							Json::Value* t = new Json::Value(read_json(json_str));
 							//std::cout << read_json(json_str) << std::endl;
-							
 							json_str.clear();
 							ss++;
-							std::cout << subscribed_win << std::endl;
 							PostMessageA(subscribed_win, WM_KOMOREBI_EVENT, reinterpret_cast<WPARAM>(t), reinterpret_cast<LPARAM>(nullptr));
 							//break;
 						}

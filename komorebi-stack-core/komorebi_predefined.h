@@ -7,14 +7,54 @@ struct JsonKeyword {
     using string = std::string;
     //static const std::string 
 
-    static const std::string event;
-    static const std::string state;
+    const static std::string Event;
+    const static std::string State;
 
 };
 #ifdef __ADD_KOMOREBI_HEADER_IMPL__
 
-const std::string JsonKeyword::event = "event";
-const std::string JsonKeyword::state = "state";
+const std::string JsonKeyword::Event = "event";
+const std::string JsonKeyword::State = "state";
+
+
+#endif
+
+struct KomorebiState {
+
+    const static std::string border_overflow_identifiers;
+    const static std::string cross_monitor_move_behaviour;
+    const static std::string float_identifiers;
+    const static std::string has_pending_raise_op;
+    const static std::string invisible_borders;
+    const static std::string is_paused;
+    const static std::string layered_whitelist;
+    const static std::string manage_identifiers;
+    const static std::string monitors;
+    const static std::string mouse_follows_focus;
+    const static std::string name_change_on_launch_identifiers;
+    const static std::string new_window_behaviour;
+    const static std::string resize_delta;
+    const static std::string tray_and_multi_window_identifiers;
+
+};
+
+#ifdef __ADD_KOMOREBI_HEADER_IMPL__
+const std::string KomorebiState::border_overflow_identifiers = "border_overflow_identifiers";
+const std::string KomorebiState::cross_monitor_move_behaviour = "cross_monitor_move_behaviour";
+const std::string KomorebiState::float_identifiers = "float_identifiers";
+const std::string KomorebiState::has_pending_raise_op = "has_pending_raise_op";
+const std::string KomorebiState::invisible_borders = "invisible_borders";
+const std::string KomorebiState::is_paused = "invisible_borders";
+const std::string KomorebiState::layered_whitelist = "layered_whitelist";
+const std::string KomorebiState::manage_identifiers = "manage_identifiers";
+const std::string KomorebiState::monitors = "monitors";
+const std::string KomorebiState::mouse_follows_focus = "mouse_follows_focus";
+const std::string KomorebiState::name_change_on_launch_identifiers = "name_change_on_launch_identifiers";
+const std::string KomorebiState::new_window_behaviour = "new_window_behaviour";
+const std::string KomorebiState::resize_delta = "resize_delta";
+const std::string KomorebiState::tray_and_multi_window_identifiers = "tray_and_multi_window_identifiers";
+
+
 
 
 #endif
@@ -22,32 +62,41 @@ const std::string JsonKeyword::state = "state";
 
 struct KomorebiEvent {
 
-    static const std::string KomorebiConnect;
-    static const std::string KomorebiUpdate;
-    static const std::string KomorebiDisconnect;
-    static const std::string FocusWorkspaceNumber;
-    static const std::string FocusMonitorWorkspaceNumber;
-    static const std::string FocusChange;
-    static const std::string ChangeLayout;
-    static const std::string ToggleTiling;
-    static const std::string ToggleMonocle;
-    static const std::string ToggleMaximise;
-    static const std::string TogglePause;
-    static const std::string EnsureWorkspaces;
-    static const std::string CycleFocusMonitor;
-    static const std::string CycleFocusWorkspace;
-    static const std::string FocusMonitorNumber;
-    static const std::string ReloadConfiguration;
-    static const std::string WatchConfiguration;
-    static const std::string Manage;
-    static const std::string Unmanage;
-    static const std::string MoveContainerToMonitorNumber;
-    static const std::string MoveContainerToWorkspaceNumber;
-    static const std::string MoveWorkspaceToMonitorNumber;
-    static const std::string NewWorkspace;
-    static const std::string SendContainerToMonitorNumber;
-    static const std::string SendContainerToWorkspaceNumber;
-    static const std::string WorkspaceName;
+    const static std::string KomorebiConnect;
+    const static std::string KomorebiUpdate;
+    const static std::string KomorebiDisconnect;
+    const static std::string FocusWorkspaceNumber;
+    const static std::string FocusMonitorWorkspaceNumber;
+    const static std::string FocusChange;
+    const static std::string ChangeLayout;
+    const static std::string ToggleTiling;
+    const static std::string ToggleMonocle;
+    const static std::string ToggleMaximise;
+    const static std::string TogglePause;
+    const static std::string EnsureWorkspaces;
+    const static std::string CycleFocusMonitor;
+    const static std::string CycleFocusWorkspace;
+    const static std::string FocusMonitorNumber;
+    const static std::string ReloadConfiguration;
+    const static std::string WatchConfiguration;
+    const static std::string Manage;
+    const static std::string Unmanage;
+    const static std::string MoveContainerToMonitorNumber;
+    const static std::string MoveContainerToWorkspaceNumber;
+    const static std::string MoveWorkspaceToMonitorNumber;
+    const static std::string NewWorkspace;
+    const static std::string SendContainerToMonitorNumber;
+    const static std::string SendContainerToWorkspaceNumber;
+    const static std::string WorkspaceName;
+    
+    //stacking
+    // for testing
+    const static std::string StackWindow;
+    const static std::string ResizeWindowEdge;
+    const static std::string UnstackWindow;
+    const static std::string CycleStack;
+
+
 };
 #ifdef __ADD_KOMOREBI_HEADER_IMPL__
 
@@ -77,6 +126,12 @@ const std::string KomorebiEvent::NewWorkspace = "NewWorkspace";
 const std::string KomorebiEvent::SendContainerToMonitorNumber = "SendContainerToMonitorNumber";
 const std::string KomorebiEvent::SendContainerToWorkspaceNumber = "SendContainerToWorkspaceNumber";
 const std::string KomorebiEvent::WorkspaceName = "WorkspaceName";
+
+const std::string KomorebiEvent::StackWindow = "StackWindow";
+const std::string KomorebiEvent::ResizeWindowEdge = "ResizeWindowEdge";
+const std::string KomorebiEvent::UnstackWindow = "UnstackWindow";
+const std::string KomorebiEvent::CycleStack = "CycleStack";
+
 
 
 #endif
