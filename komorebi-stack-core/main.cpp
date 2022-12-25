@@ -3,7 +3,7 @@
 
 #include "stb_helper_function.h" // helper function
 #include <map>
-
+#include <fstream>
 #pragma comment(lib, "Dwmapi.lib")
 
 
@@ -34,15 +34,31 @@ LRESULT _loop_function(HWND hwnd, UINT msg, WPARAM wp, LPARAM lp);
 
 typedef struct WindowComponents {
 	std::vector<HWND> m_windows;
-	std::vector<HWND> m_gizmo_handle;
+	std::vector<HWND> m_gizmo_handle_stack;
 	std::map<HWND, int> gizmo_window_handle;
+	int m_idx = -1;
 
 	enum gizmo_type {SIMPLE, ICON};
 	enum gizmo_align_type {LEFT, RIGHT, TOP, BOTTOM};
 	
-	enum gizmo_type m_gizmo_type = ICON;
-	enum gizmo_align_type m_gizmo_align_type = LEFT;
+	enum gizmo_type m_gizmo_type = ICON; //default
+	enum gizmo_align_type m_gizmo_align_type = LEFT; //default
 	
+
+	WNDCLASSEX m_wc;
+
+	void init_gizmo_window() {
+		WNDCLASSEX wc = {};
+		wc.cbSize = sizeof(WNDCLASSEX);
+		wc.style = CS_HREDRAW | CS_VREDRAW;
+		wc.lpszClassName = L"kenobi_gizmo";
+		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
+		wc.hbrBackground = NULL;
+		wc.lpfnWndProc = _loop_function;
+		
+		RegisterClassEx(&wc);
+		m_wc = wc;
+	}
 
 	void regist_window(HWND win_hwnd) {
 		m_windows.push_back(win_hwnd);
@@ -53,42 +69,47 @@ typedef struct WindowComponents {
 	}
 
 
-	void _create_gizmo_view(HWND target) {
-		WNDCLASSEX wc = {};
-		wc.cbSize = sizeof(WNDCLASSEX);
-		wc.style = CS_HREDRAW | CS_VREDRAW;
-		wc.lpszClassName = L"kenobi_gizmo";
-		wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-		wc.hbrBackground = NULL;
+	HWND _create_gizmo_view() {
+		
 
-		wc.lpfnWndProc = _loop_function;
+		HWND hand = CreateWindowEx(
+		    0,                              // Optional window styles.
+		    m_wc.lpszClassName,                     // Window class
+		    L"Learn to Program Windows",    // Window text
+		    WS_OVERLAPPEDWINDOW,            // Window style
 
-		RegisterClassEx(&wc);
+		    // Size and position
+		    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
 
-		//HWND hand = CreateWindowEx(
-		//    0,                              // Optional window styles.
-		//    CLASS_NAME,                     // Window class
-		//    L"Learn to Program Windows",    // Window text
-		//    WS_OVERLAPPEDWINDOW,            // Window style
-
-		//    // Size and position
-		//    CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-
-		//    NULL,       // Parent window    
-		//    NULL,       // Menu
-		//    hInstance,  // Instance handle
-		//    NULL        // Additional application data
-		//);
+		    NULL,       // Parent window    
+		    NULL,       // Menu
+		    NULL,  // Instance handle
+		    //hInstance,  // Instance handle
+		    NULL        // Additional application data
+		);
 
 
-		//ShowWindow(hand, SW_SHOW);
-
+		ShowWindow(hand, SW_SHOW);
+		return hand;
 
 
 	}
 
-	void _remove_item_view(HWND target) {
+	void _draw_gizmo(const HWND front_win, const std::vector<HWND>& win_list) {
+		//if (m_idx < m_gizmo_handle_stack.size() || m_idx > m_gizmo_handle_stack.size() - 1){
+		//	m_gizmo_handle_stack.push_back(_create_gizmo_view());
+		//}
 
+		//m_idx++;
+		const HWND handle = m_gizmo_handle_stack[m_idx];
+
+		//draw
+
+
+	}
+
+	void _draw_reset() {
+		m_idx = -1;
 	}
 
 	void set_gizmo_type(enum gizmo_type t) {
@@ -122,9 +143,43 @@ typedef struct WindowComponents {
 		}
 	}
 
-	void draw_stacked_window_gizmo() {
-		int t=10;
+	void _draw_stacked_window_gizmo(const Json::Value& json) {
+		const int monitor_num = json.size();
+		_draw_reset();
+		for (int i = 0; i < monitor_num; i++) {
+			for (const Json::Value& monitor_elem : json[i]["workspaces"]["elements"]) {
+				for (const Json::Value& win : monitor_elem["containers"]["elements"]) {
+					//[ {class, exe, hwnd, recct, title}, ... focus {class, exe, hwnd, recct, title}]
+					// if there are stacked windows exists, size is bigger than 1.
+					for (const Json::Value& win_elem : win["windows"]["elements"]) {
+						const bool is_stacked = win_elem.size() > 1 ? true : false;
+						bool container_visible = false;
+
+						//int left, right, top, bottom;
+						HWND front_window_hwnd;
+						std::vector<HWND> hwnd_list;
+						for (const Json::Value& specific_win : win_elem) {
+							bool specific_win_visibility = specific_win["rect"]["left"] < 0 || specific_win["rect"]["top"] < 0;
+							container_visible |= specific_win_visibility;
+							HWND win_hwnd = String2HWND(specific_win["hwnd"]);
+							if (specific_win_visibility)
+								front_window_hwnd = win_hwnd;
+							hwnd_list.push_back(win_hwnd);
+						}
+
+						if (container_visible) {
+							if (is_stacked) {
+								_draw_gizmo(front_window_hwnd, hwnd_list);
+							}
+						}
+					}
+				}
+			}
+		}
 	}
+
+
+
 
 	// hwnd : focused window hwnd that stacked.
 	void update(Json::Value& json) { // when WIN_PAINT or get Signal(immediately)
@@ -135,22 +190,17 @@ typedef struct WindowComponents {
 		if (json[JsonKeyword::Event]["type"] == KomorebiEvent::StackWindow) {
 			std::cout << json[JsonKeyword::Event] << std::endl;
 		}
-		return;
-		Json::Value tmp = json["event"];
-		std::cout << "size of HWND" << sizeof(HWND) << std::endl;
-		//std::cout << json["event"] << std::endl;
-		/*HWND tmp2 = (HWND)(tmp["content"][1]["hwnd"].asUInt());
-		std::cout << sizeof(double) << std::endl;
-		std::cout << "hwnd" << tmp2 << std::endl;
-		tmp2 = reinterpret_cast<HWND>(tmp["content"][1]["hwnd"].asUInt64());
-		std::cout << "hwnd" << (int)tmp2 << std::endl;
-		*/
-		//Json::Value rect = tmp["content"][1]["rect"];
 
-		//std::cout << tmp << std::endl;
-		//std::cout << rect << std::endl;
+		_draw_stacked_window_gizmo(json["state"]["monitors"]["elements"]);
 
-		std::cout << "====update end=====" << std::endl;
+		
+	/*	std::cout << "====update end=====" << std::endl;
+		std::ofstream stream;
+		stream.open("write.json", 'w');
+		stream << json["state"]["monitors"]["elements"] << std::endl;
+		stream.close();*/
+		
+		
 	}
 
 	// hwnd : stacked all windows hwnd that is visible.
@@ -211,7 +261,8 @@ struct GlobalContext {
 	HWND m_hwnd; //this program handle.
 	kenobi::NamedPipe m_named_pipe;
 	Window m_win;
-	void init() {
+
+	void _init_main_window() {
 		WNDCLASSEX wc = {};
 		wc.cbSize = sizeof(WNDCLASSEX);
 		wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -229,6 +280,14 @@ struct GlobalContext {
 		::SetTimer(m_hwnd, timerIdFrameColor, 500, NULL);
 		SetLayeredWindowAttributes(m_hwnd, MY_COLOR_KEY, 255, LWA_COLORKEY);
 		ShowWindow(m_hwnd, SW_SHOW);
+	}
+	void _init_gizmo_window() {
+		
+	}
+
+	void init() {
+		_init_main_window();
+		_init_gizmo_window();
 
 	}
 
@@ -289,16 +348,7 @@ bool init() {
 	const std::string tmp_command(command.begin(), command.end());
 	std::cout << tmp_command << std::endl;
 	system(tmp_command.c_str());
-	WNDCLASSEX wc = {};
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpszClassName = L"Kenobi";
-	wc.hCursor = ::LoadCursor(NULL, IDC_ARROW);
-	wc.hbrBackground = NULL;
 
-	wc.lpfnWndProc = _loop_function;
-
-	RegisterClassEx(&wc);
 
 	//HWND hand = CreateWindowEx(
 	//    0,                              // Optional window styles.
@@ -314,7 +364,7 @@ bool init() {
 	//    hInstance,  // Instance handle
 	//    NULL        // Additional application data
 	//);
-
+	
 
 	//ShowWindow(hand, SW_SHOW);
 	return true;

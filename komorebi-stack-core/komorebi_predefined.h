@@ -3,6 +3,10 @@
 #include <Windows.h>
 #define WM_KOMOREBI_EVENT (WM_USER+1)
 
+// x is Json::Value type
+#define String2HWND(x) (reinterpret_cast<HWND>((x).asUInt64()))
+
+
 struct JsonKeyword {
     using string = std::string;
     //static const std::string 

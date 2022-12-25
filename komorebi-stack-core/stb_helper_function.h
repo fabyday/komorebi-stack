@@ -12,7 +12,6 @@
 #define WM_KOMOREBI_EVENT (WM_USER+1)
 
 
-
 namespace fs = std::filesystem;
 #define MAX_BUFFER 2048
 

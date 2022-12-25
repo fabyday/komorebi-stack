@@ -1,0 +1,251 @@
+[
+	{
+		"id" : 65537,
+		"size" : 
+		{
+			"bottom" : 1080,
+			"left" : 0,
+			"right" : 1920,
+			"top" : 0
+		},
+		"work_area_size" : 
+		{
+			"bottom" : 1080,
+			"left" : 0,
+			"right" : 1920,
+			"top" : 0
+		},
+		"workspaces" : 
+		{
+			"elements" : 
+			[
+				{
+					"container_padding" : 10,
+					"containers" : 
+					{
+						"elements" : 
+						[
+							{
+								"windows" : 
+								{
+									"elements" : 
+									[
+										{
+											"class" : "Chrome_WidgetWin_1",
+											"exe" : "Code.exe",
+											"hwnd" : 68904,
+											"rect" : 
+											{
+												"bottom" : 1040,
+												"left" : 20,
+												"right" : 930,
+												"top" : 20
+											},
+											"title" : "write.json - Visual Studio Code"
+										}
+									],
+									"focused" : 0
+								}
+							},
+							{
+								"windows" : 
+								{
+									"elements" : 
+									[
+										{
+											"class" : "HwndWrapper[DefaultDomain;;c52ed0fd-9538-4f99-97d8-8ca8968f9c01]",
+											"exe" : "devenv.exe",
+											"hwnd" : 133502,
+											"rect" : 
+											{
+												"bottom" : 517,
+												"left" : 963,
+												"right" : 944,
+												"top" : 20
+											},
+											"title" : "komorebi-stack (\uc2e4\ud589) - Microsoft Visual Studio"
+										}
+									],
+									"focused" : 0
+								}
+							},
+							{
+								"windows" : 
+								{
+									"elements" : 
+									[
+										{
+											"class" : "ConsoleWindowClass",
+											"exe" : "komorebi-stack-core.exe",
+											"hwnd" : 789538,
+											"rect" : 
+											{
+												"bottom" : 517,
+												"left" : 963,
+												"right" : 944,
+												"top" : 550
+											},
+											"title" : "D:\\Project\\komorebi-stack\\x64\\Debug\\komorebi-stack-core.exe"
+										}
+									],
+									"focused" : 0
+								}
+							}
+						],
+						"focused" : 1
+					},
+					"floating_windows" : [],
+					"layout" : 
+					{
+						"Default" : "BSP"
+					},
+					"layout_flip" : null,
+					"layout_rules" : [],
+					"maximized_window" : null,
+					"monocle_container" : null,
+					"name" : "I",
+					"resize_dimensions" : 
+					[
+						null,
+						null,
+						null
+					],
+					"tile" : true,
+					"workspace_padding" : 10
+				}
+			],
+			"focused" : 0
+		}
+	},
+	{
+		"id" : 65539,
+		"size" : 
+		{
+			"bottom" : 1080,
+			"left" : 1920,
+			"right" : 1920,
+			"top" : 0
+		},
+		"work_area_size" : 
+		{
+			"bottom" : 1080,
+			"left" : 1982,
+			"right" : 1858,
+			"top" : 0
+		},
+		"workspaces" : 
+		{
+			"elements" : 
+			[
+				{
+					"container_padding" : 10,
+					"containers" : 
+					{
+						"elements" : 
+						[
+							{
+								"windows" : 
+								{
+									"elements" : 
+									[
+										{
+											"class" : "ConsoleWindowClass",
+											"exe" : "cmd.exe",
+											"hwnd" : 329614,
+											"rect" : 
+											{
+												"bottom" : 28,
+												"left" : -32000,
+												"right" : 160,
+												"top" : -32000
+											},
+											"title" : "C:\\WINDOWS\\system32\\cmd.exe"
+										},
+										{
+											"class" : "ConsoleWindowClass",
+											"exe" : "powershell.exe",
+											"hwnd" : 460720,
+											"rect" : 
+											{
+												"bottom" : 1047,
+												"left" : 1995,
+												"right" : 913,
+												"top" : 20
+											},
+											"title" : "Windows PowerShell"
+										}
+									],
+									"focused" : 1
+								}
+							},
+							{
+								"windows" : 
+								{
+									"elements" : 
+									[
+										{
+											"class" : "CabinetWClass",
+											"exe" : "explorer.exe",
+											"hwnd" : 4720524,
+											"rect" : 
+											{
+												"bottom" : 517,
+												"left" : 2914,
+												"right" : 913,
+												"top" : 20
+											},
+											"title" : "komorebi-stack-core"
+										}
+									],
+									"focused" : 0
+								}
+							},
+							{
+								"windows" : 
+								{
+									"elements" : 
+									[
+										{
+											"class" : "Chrome_WidgetWin_1",
+											"exe" : "Discord.exe",
+											"hwnd" : 985662,
+											"rect" : 
+											{
+												"bottom" : 510,
+												"left" : 2921,
+												"right" : 940,
+												"top" : 550
+											},
+											"title" : "#general | fabyday - Discord"
+										}
+									],
+									"focused" : 0
+								}
+							}
+						],
+						"focused" : 0
+					},
+					"floating_windows" : [],
+					"layout" : 
+					{
+						"Default" : "BSP"
+					},
+					"layout_flip" : null,
+					"layout_rules" : [],
+					"maximized_window" : null,
+					"monocle_container" : null,
+					"name" : null,
+					"resize_dimensions" : 
+					[
+						null,
+						null,
+						null
+					],
+					"tile" : true,
+					"workspace_padding" : 10
+				}
+			],
+			"focused" : 0
+		}
+	}
+]
